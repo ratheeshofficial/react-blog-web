@@ -10,7 +10,7 @@ import {
 } from "@chakra-ui/react";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 const SinglePost = () => {
   const [postData, setPostData] = useState();
@@ -18,7 +18,10 @@ const SinglePost = () => {
   const location = useLocation();
   const id = location.pathname.split("/")[2];
   useEffect(() => {
-    axios.get(`/post/${id}`).then((res) => setPostData(res.data));
+    const fetchPosts = async () => {
+      await axios.get(`/post/${id}`).then((res) => setPostData(res.data));
+    };
+    fetchPosts();
   }, []);
   return (
     <Card>
@@ -30,10 +33,10 @@ const SinglePost = () => {
         <Stack divider={<StackDivider />} spacing="4">
           <Box>
             <Heading size="xs" textTransform="uppercase">
-              {postData.title}
+              {postData && postData.title}
             </Heading>
             <Text pt="2" fontSize="sm">
-              {postData.desc}
+              {postData && postData.desc}
             </Text>
           </Box>
           <Box>
@@ -41,7 +44,11 @@ const SinglePost = () => {
               Username
             </Heading>
             <Text pt="2" fontSize="sm">
-              {postData.username}
+              {postData && (
+                <Link to={`/?user=${postData.username}`}>
+                  {postData.username}
+                </Link>
+              )}
             </Text>
           </Box>
         </Stack>
