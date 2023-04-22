@@ -40,7 +40,7 @@ const Post = ({ posts }) => {
           <CardFooter>
             <Link to={`/post/${posts._id}`}>
               <Button variant="solid" colorScheme="blue">
-                Buy Latte
+                View
               </Button>
             </Link>
           </CardFooter>

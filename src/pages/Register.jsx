@@ -11,10 +11,11 @@ import {
   Avatar,
   AvatarGroup,
   useBreakpointValue,
-  IconProps,
   Icon,
   FormControl,
   FormLabel,
+  InputGroup,
+  InputRightElement,
 } from "@chakra-ui/react";
 import axios from "axios";
 import { useEffect, useState } from "react";
@@ -46,12 +47,14 @@ const avatars = [
 
 export default function JoinOurTeam() {
   const [userData, setUserData] = useState([]);
-  //   console.log("userData", userData);
-  const [isCheck, seIscheck] = useState(false);
-  const [userValue, setUserValue] = useState({});
-  const [emailValue, setEmailValue] = useState({});
-  const [errorSameUsername, setErrorSameUsername] = useState("");
-  const [errorSameEmail, setErrorSameEmail] = useState("");
+  const [disabled, setDisabled] = useState(false);
+
+  const [show, setShow] = useState(false);
+
+  const handleClick = () => {
+    console.log("shoe");
+    setShow(!show);
+  };
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -60,6 +63,7 @@ export default function JoinOurTeam() {
     };
     fetchUser();
   }, []);
+
   return (
     <Box position={"relative"}>
       <Container
@@ -185,42 +189,44 @@ export default function JoinOurTeam() {
                 .max(15, "Must be 15 characters or less")
                 .required("Required"),
             })}
-            onSubmit={async (values, { resetForm }) => {
-              console.log("values", values);
-              // await new Promise((r) => setTimeout(r, 500));
-              // const res = await axios.post("/auth/register", values);
-              console.log("userData", userData);
-
-              const userDataFilter = userData.filter(
-                (one) => one.username === values.username
-              );
-              console.log("userDataFilter", userDataFilter);
-              userDataFilter.map((res) => {
-                return setUserValue(res);
-              });
-
-              const userEmailFilter = userData.filter(
-                (one) => one.email === values.email
-              );
-              console.log("userEmailFilter", userEmailFilter);
-              userEmailFilter.map((res) => {
-                return setEmailValue(res);
-              });
-
-              //   alert(JSON.stringify(values, null, 2));
-              //   resetForm({ values: "" });
-
-              //   res.data && window.location.replace("/login");
-              if (userValue.username === values.username) {
-                setErrorSameUsername("same username");
-              }
-              if (emailValue.email === values.email) {
-                setErrorSameEmail("same Email");
-              }
-            }}
           >
-            {(props) => (
-              <Form>
+            {({ handleChange, setFieldError, resetForm }) => (
+              <Form
+                onSubmit={async (e) => {
+                  e.preventDefault();
+
+                  const values = {
+                    username: e.target.username.value,
+                    email: e.target.email.value,
+                    password: e.target.password.value,
+                  };
+
+                  const userNames = userData
+                    .map((un) => {
+                      return un.username;
+                    })
+                    .includes(e.target.username.value);
+
+                  const email = userData
+                    .map((un) => {
+                      return un.email;
+                    })
+                    .includes(e.target.email.value);
+
+                  if (userNames) {
+                    return setFieldError("username", "name already exist");
+                  }
+                  if (email) {
+                    return setFieldError("email", "email already exist");
+                  }
+
+                  // alert(JSON.stringify(values, null, 2));
+                  const res = await axios.post("/auth/register", values);
+                  resetForm({ values: "" });
+                  setDisabled(true);
+                  res && window.location.replace("/login");
+                }}
+              >
                 <Stack spacing={4}>
                   <Field id="username" name="username">
                     {({ field, form }) => (
@@ -243,9 +249,6 @@ export default function JoinOurTeam() {
                             </Text>
                           )}
                         </ErrorMessage>
-                        <Text as="span" color="red">
-                          {errorSameUsername ? errorSameUsername : ""}
-                        </Text>
                       </FormControl>
                     )}
                   </Field>
@@ -270,9 +273,6 @@ export default function JoinOurTeam() {
                             </Text>
                           )}
                         </ErrorMessage>
-                        <Text as="span" color="red">
-                          {errorSameEmail ? errorSameEmail : ""}
-                        </Text>
                       </FormControl>
                     )}
                   </Field>
@@ -280,16 +280,24 @@ export default function JoinOurTeam() {
                     {({ field, form }) => (
                       <FormControl isRequired>
                         <FormLabel>Password</FormLabel>
-                        <Input
-                          {...field}
-                          placeholder="password"
-                          bg={"gray.100"}
-                          border={0}
-                          color={"gray.500"}
-                          _placeholder={{
-                            color: "gray.500",
-                          }}
-                        />
+                        <InputGroup>
+                          <Input
+                            type={show ? "text" : "password"}
+                            {...field}
+                            placeholder="password"
+                            bg={"gray.100"}
+                            border={0}
+                            color={"gray.500"}
+                            _placeholder={{
+                              color: "gray.500",
+                            }}
+                          />
+                          <InputRightElement width="4.5rem">
+                            <Button h="1.75rem" size="sm" onClick={handleClick}>
+                              {show ? "Hide" : "Show"}
+                            </Button>
+                          </InputRightElement>
+                        </InputGroup>
                         <ErrorMessage name="password">
                           {(error) => (
                             <Text as="span" color="red">
@@ -316,6 +324,7 @@ export default function JoinOurTeam() {
                     boxShadow: "xl",
                   }}
                   type="submit"
+                  isDisabled={disabled}
                 >
                   Submit
                 </Button>

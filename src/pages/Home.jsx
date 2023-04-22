@@ -4,6 +4,8 @@ import axios from "axios";
 import Post from "../components/Post";
 import { Box, SimpleGrid, Text } from "@chakra-ui/react";
 import { Link, useLocation } from "react-router-dom";
+import Editor from "./TinyMceEditor";
+import TinyMceEditor from "./TinyMceEditor";
 
 const Home = () => {
   const [posts, setPosts] = useState([]);
@@ -31,6 +33,9 @@ const Home = () => {
             </Link>
           ))}
       </Box>
+      {/* <Box>
+        <TinyMceEditor />
+      </Box> */}
     </SimpleGrid>
   );
 };

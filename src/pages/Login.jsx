@@ -15,6 +15,8 @@ import {
   Icon,
   FormControl,
   FormLabel,
+  InputGroup,
+  InputRightElement,
 } from "@chakra-ui/react";
 import axios from "axios";
 import { useState } from "react";
@@ -45,6 +47,14 @@ const avatars = [
 ];
 
 export default function JoinOurTeam() {
+  const [disabled, setDisabled] = useState(false);
+
+  const [show, setShow] = useState(false);
+
+  const handleClick = () => {
+    console.log("shoe");
+    setShow(!show);
+  };
   return (
     <Box position={"relative"}>
       <Container
@@ -211,16 +221,24 @@ export default function JoinOurTeam() {
                     {({ field, form }) => (
                       <FormControl isRequired>
                         <FormLabel>Password</FormLabel>
-                        <Input
-                          {...field}
-                          placeholder="password"
-                          bg={"gray.100"}
-                          border={0}
-                          color={"gray.500"}
-                          _placeholder={{
-                            color: "gray.500",
-                          }}
-                        />
+                        <InputGroup>
+                          <Input
+                            type={show ? "text" : "password"}
+                            {...field}
+                            placeholder="password"
+                            bg={"gray.100"}
+                            border={0}
+                            color={"gray.500"}
+                            _placeholder={{
+                              color: "gray.500",
+                            }}
+                          />
+                          <InputRightElement width="4.5rem">
+                            <Button h="1.75rem" size="sm" onClick={handleClick}>
+                              {show ? "Hide" : "Show"}
+                            </Button>
+                          </InputRightElement>
+                        </InputGroup>
                         <ErrorMessage name="password">
                           {(error) => (
                             <Text as="span" color="red">

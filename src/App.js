@@ -5,12 +5,14 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import SinglePost from "./pages/SinglePost";
 import Register from "./pages/Register";
 import Login from "./pages/Login";
+import TinyMceEditor from "./pages/TinyMceEditor";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/editor" element={<TinyMceEditor />} />
         <Route path="/post/:id" element={<SinglePost />} />
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
