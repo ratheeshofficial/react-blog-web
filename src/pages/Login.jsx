@@ -19,9 +19,10 @@ import {
   InputRightElement,
 } from "@chakra-ui/react";
 import axios from "axios";
-import { useState } from "react";
+import { useContext, useRef, useState } from "react";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import * as Yup from "yup";
+import { Context } from "../context/Context";
 
 const avatars = [
   {
@@ -49,10 +50,16 @@ const avatars = [
 export default function JoinOurTeam() {
   const [disabled, setDisabled] = useState(false);
 
+  const { user, dispatch, isFetching } = useContext(Context);
+
+  const userRef = useRef();
+  // console.log("userRef.current.value", userRef.current.value);
+  const passwordRef = useRef();
+  // console.log("passwordRef.current.value", passwordRef.current.value);
+
   const [show, setShow] = useState(false);
 
   const handleClick = () => {
-    console.log("shoe");
     setShow(!show);
   };
   return (
@@ -177,20 +184,27 @@ export default function JoinOurTeam() {
                 .max(15, "Must be 15 characters or less")
                 .required("Required"),
             })}
-            onSubmit={async (values, { resetForm }) => {
-              // await new Promise((r) => setTimeout(r, 500));
-              //   const res = await axios.post("/auth/register", values);
-              //   alert(JSON.stringify(values, null, 2));
-              //   resetForm({ values: "" });
-
-              //   res.data && window.location.replace("/login");
-
-              const res = await axios.post("/auth/login", values);
-              console.log("res", res);
-            }}
           >
-            {(props) => (
-              <Form>
+            {(values) => (
+              <Form
+                onSubmit={async (e) => {
+                  e.preventDefault();
+                  console.log("222ee", e.target.username.value);
+                  console.log("222ee", e.target.password.value);
+                  dispatch({ type: "LOGIN_START" });
+                  try {
+                    const res = await axios.post("/auth/login", {
+                      username: e.target.username.value,
+                      password: e.target.password.value,
+                    });
+                    console.log("res.data", res.data);
+                    dispatch({ type: "LOGIN_SUCCESS", payload: res.data });
+                  } catch (error) {
+                    dispatch({ type: "LOGIN_FAILURE" });
+                  }
+                  console.log("userrrrr", user);
+                }}
+              >
                 <Stack spacing={4}>
                   <Field id="username" name="username">
                     {({ field, form }) => (

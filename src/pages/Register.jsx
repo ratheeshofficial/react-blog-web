@@ -45,6 +45,10 @@ const avatars = [
   },
 ];
 
+// sgMail.setApiKey(
+//   "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"
+// );
+
 export default function JoinOurTeam() {
   const [userData, setUserData] = useState([]);
   const [disabled, setDisabled] = useState(false);
@@ -221,10 +225,19 @@ export default function JoinOurTeam() {
                   }
 
                   // alert(JSON.stringify(values, null, 2));
-                  const res = await axios.post("/auth/register", values);
-                  resetForm({ values: "" });
-                  setDisabled(true);
-                  res && window.location.replace("/login");
+
+                  // const msg = {
+                  //   to: "test@example.com",
+                  //   from: "test@example.com", // Use the email address or domain you verified above
+                  //   subject: "Sending with Twilio SendGrid is Fun",
+                  //   text: "and easy to do anywhere, even with Node.js",
+                  //   html: "<strong>and easy to do anywhere, even with Node.js</strong>",
+                  // };
+                  await axios.post("/auth/register", values);
+
+                  // resetForm({ values: "" });
+                  // setDisabled(true);
+                  // res && window.location.replace("/login");
                 }}
               >
                 <Stack spacing={4}>
