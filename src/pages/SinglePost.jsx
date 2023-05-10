@@ -1,5 +1,6 @@
 import {
   Box,
+  Button,
   Card,
   CardBody,
   CardHeader,
@@ -13,6 +14,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 
 const SinglePost = () => {
+  const [isApproved, setIsApproved] = useState(null);
   const [postData, setPostData] = useState();
   console.log("postData", postData);
   const location = useLocation();
@@ -23,6 +25,26 @@ const SinglePost = () => {
     };
     fetchPosts();
   }, []);
+
+  const handleApprove = async () => {
+    setIsApproved(true);
+    await axios
+      .put(`/post/${id}`, {
+        username: postData.username,
+        isApproved: true,
+      })
+      .then((res) => console.log("res", res));
+  };
+
+  const handleDeny = async () => {
+    setIsApproved(false);
+    await axios
+      .put(`/post/${id}`, {
+        username: postData.username,
+        isApproved: false,
+      })
+      .then((res) => console.log("res", res));
+  };
   return (
     <Card>
       <CardHeader>
@@ -51,6 +73,15 @@ const SinglePost = () => {
               )}
             </Text>
           </Box>
+          <Button onClick={handleApprove} colorScheme="green">
+            Approve
+          </Button>
+          <Button onClick={handleDeny} colorScheme="red" ml="2">
+            deny
+          </Button>
+          {isApproved !== null && (
+            <Text> {isApproved ? "Approved" : "denied"}</Text>
+          )}
         </Stack>
       </CardBody>
     </Card>

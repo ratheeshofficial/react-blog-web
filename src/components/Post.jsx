@@ -8,11 +8,26 @@ import {
   Stack,
   Text,
 } from "@chakra-ui/react";
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import jsPDF from "jspdf";
 
 const Post = ({ posts }) => {
-  console.log("posts", posts);
+  const [isGenerating, setIsGenerating] = useState(false);
+  // console.log("posts", posts);
+  const handleDownload = (post) => {
+    // setIsGenerating(true);
+    console.log("postttt", post);
+    const doc = new jsPDF();
+    console.log("doc", doc);
+
+    doc.text(`Name: ${post.title}`, 10, 10);
+    doc.text(`Desc: ${post.desc}`, 10, 20);
+    doc.text(`Username: ${post.username}`, 10, 30);
+    console.log("doc", doc);
+    doc.save("a4.pdf");
+    // setIsGenerating(false);
+  };
   return (
     <>
       <Card
@@ -39,10 +54,18 @@ const Post = ({ posts }) => {
 
           <CardFooter>
             <Link to={`/post/${posts._id}`}>
-              <Button variant="solid" colorScheme="blue">
+              <Button variant="solid" colorScheme="green">
                 View
               </Button>
             </Link>
+            <Button
+              ml="2"
+              variant="solid"
+              colorScheme="blue"
+              onClick={() => handleDownload(posts)}
+            >
+              {isGenerating ? "Generating PDf..." : "Download PDF"}
+            </Button>
           </CardFooter>
         </Stack>
       </Card>

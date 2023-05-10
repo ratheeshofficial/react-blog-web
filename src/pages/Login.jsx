@@ -185,24 +185,33 @@ export default function JoinOurTeam() {
                 .required("Required"),
             })}
           >
-            {(values) => (
+            {({ values }) => (
               <Form
                 onSubmit={async (e) => {
+                  // e.preventDefault();
+                  // console.log("222ee", e.target.username.value);
+                  // console.log("222ee", e.target.password.value);
+                  // dispatch({ type: "LOGIN_START" });
+                  // try {
+                  //   const res = await axios.post("/auth/login", {
+                  //     username: e.target.username.value,
+                  //     password: e.target.password.value,
+                  //   });
+                  //   console.log("res.data", res.data);
+                  //   dispatch({ type: "LOGIN_SUCCESS", payload: res.data });
+                  // } catch (error) {
+                  //   dispatch({ type: "LOGIN_FAILURE" });
+                  // }
+                  // console.log("userrrrr", user);
                   e.preventDefault();
-                  console.log("222ee", e.target.username.value);
-                  console.log("222ee", e.target.password.value);
-                  dispatch({ type: "LOGIN_START" });
-                  try {
-                    const res = await axios.post("/auth/login", {
-                      username: e.target.username.value,
-                      password: e.target.password.value,
-                    });
-                    console.log("res.data", res.data);
-                    dispatch({ type: "LOGIN_SUCCESS", payload: res.data });
-                  } catch (error) {
-                    dispatch({ type: "LOGIN_FAILURE" });
-                  }
-                  console.log("userrrrr", user);
+                  await axios
+                    .post("/auth/login", values)
+                    .then((res) =>
+                      localStorage.setItem(
+                        "loginDetails",
+                        JSON.stringify(res.data)
+                      )
+                    );
                 }}
               >
                 <Stack spacing={4}>

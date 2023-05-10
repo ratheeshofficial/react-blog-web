@@ -16,42 +16,23 @@ import {
   FormLabel,
   InputGroup,
   InputRightElement,
+  Select,
 } from "@chakra-ui/react";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import * as Yup from "yup";
 
-const avatars = [
-  {
-    name: "Ryan Florence",
-    url: "https://bit.ly/ryan-florence",
-  },
-  {
-    name: "Segun Adebayo",
-    url: "https://bit.ly/sage-adebayo",
-  },
-  {
-    name: "Kent Dodds",
-    url: "https://bit.ly/kent-c-dodds",
-  },
-  {
-    name: "Prosper Otemuyiwa",
-    url: "https://bit.ly/prosper-baba",
-  },
-  {
-    name: "Christian Nwamba",
-    url: "https://bit.ly/code-beast",
-  },
-];
-
-// sgMail.setApiKey(
-//   "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"
-// );
-
 export default function JoinOurTeam() {
+  const options = [
+    { value: "admin", label: "Admin" },
+    { value: "user", label: "User" },
+  ];
+
   const [userData, setUserData] = useState([]);
   const [disabled, setDisabled] = useState(false);
+
+  const [isApproved, setIsApproved] = useState(null);
 
   const [show, setShow] = useState(false);
 
@@ -77,78 +58,6 @@ export default function JoinOurTeam() {
         spacing={{ base: 10, lg: 32 }}
         py={{ base: 10, sm: 20, lg: 32 }}
       >
-        <Stack spacing={{ base: 10, md: 20 }}>
-          <Heading
-            lineHeight={1.1}
-            fontSize={{ base: "3xl", sm: "4xl", md: "5xl", lg: "6xl" }}
-          >
-            Senior web designers{" "}
-            <Text
-              as={"span"}
-              bgGradient="linear(to-r, red.400,pink.400)"
-              bgClip="text"
-            >
-              &
-            </Text>{" "}
-            Full-Stack Developers
-          </Heading>
-          <Stack direction={"row"} spacing={4} align={"center"}>
-            <AvatarGroup>
-              {avatars.map((avatar) => (
-                <Avatar
-                  key={avatar.name}
-                  name={avatar.name}
-                  src={avatar.url}
-                  // size={useBreakpointValue({ base: 'md', md: 'lg' })}
-                  size={{ base: "md", md: "lg" }}
-                  position={"relative"}
-                  zIndex={2}
-                  _before={{
-                    content: '""',
-                    width: "full",
-                    height: "full",
-                    rounded: "full",
-                    transform: "scale(1.125)",
-                    bgGradient: "linear(to-bl, red.400,pink.400)",
-                    position: "absolute",
-                    zIndex: -1,
-                    top: 0,
-                    left: 0,
-                  }}
-                />
-              ))}
-            </AvatarGroup>
-            <Text fontFamily={"heading"} fontSize={{ base: "4xl", md: "6xl" }}>
-              +
-            </Text>
-            <Flex
-              align={"center"}
-              justify={"center"}
-              fontFamily={"heading"}
-              fontSize={{ base: "sm", md: "lg" }}
-              bg={"gray.800"}
-              color={"white"}
-              rounded={"full"}
-              minWidth={useBreakpointValue({ base: "44px", md: "60px" })}
-              minHeight={useBreakpointValue({ base: "44px", md: "60px" })}
-              position={"relative"}
-              _before={{
-                content: '""',
-                width: "full",
-                height: "full",
-                rounded: "full",
-                transform: "scale(1.125)",
-                bgGradient: "linear(to-bl, orange.400,yellow.400)",
-                position: "absolute",
-                zIndex: -1,
-                top: 0,
-                left: 0,
-              }}
-            >
-              YOU
-            </Flex>
-          </Stack>
-        </Stack>
         <Stack
           bg={"gray.50"}
           rounded={"xl"}
@@ -162,7 +71,7 @@ export default function JoinOurTeam() {
               lineHeight={1.1}
               fontSize={{ base: "2xl", sm: "3xl", md: "4xl" }}
             >
-              Register
+              Create Admin
               <Text
                 as={"span"}
                 bgGradient="linear(to-r, red.400,pink.400)"
@@ -179,31 +88,29 @@ export default function JoinOurTeam() {
           <Formik
             initialValues={{
               username: "",
-              email: "",
               password: "",
+              role: "",
             }}
             validationSchema={Yup.object({
               username: Yup.string()
                 .max(15, "Must be 15 characters or less")
                 .required("Required"),
-              email: Yup.string()
-                .email("Invalid email address")
-                .required("Required"),
+
               password: Yup.string()
                 .max(15, "Must be 15 characters or less")
                 .required("Required"),
             })}
           >
-            {({ handleChange, setFieldError, resetForm }) => (
+            {({ values, handleChange, setFieldError, resetForm }) => (
               <Form
                 onSubmit={async (e) => {
                   e.preventDefault();
+                  console.log("values", values);
 
-                  const values = {
-                    username: e.target.username.value,
-                    email: e.target.email.value,
-                    password: e.target.password.value,
-                  };
+                  // const values = {
+                  //   username: e.target.username.value,
+                  //   password: e.target.password.value,
+                  // };
 
                   const userNames = userData
                     .map((un) => {
@@ -211,17 +118,8 @@ export default function JoinOurTeam() {
                     })
                     .includes(e.target.username.value);
 
-                  const email = userData
-                    .map((un) => {
-                      return un.email;
-                    })
-                    .includes(e.target.email.value);
-
                   if (userNames) {
                     return setFieldError("username", "name already exist");
-                  }
-                  if (email) {
-                    return setFieldError("email", "email already exist");
                   }
 
                   alert(JSON.stringify(values, null, 2));
@@ -234,11 +132,11 @@ export default function JoinOurTeam() {
                   //   html: "<strong>and easy to do anywhere, even with Node.js</strong>",
                   // };
                   await axios
-                    .post("/auth/register", values)
+                    .post("/auth/admin", values)
                     .then((res) => console.log("res", res));
 
                   // resetForm({ values: "" });
-                  // setDisabled(true);
+                  //   setDisabled(true);
                   // res && window.location.replace("/login");
                 }}
               >
@@ -267,30 +165,7 @@ export default function JoinOurTeam() {
                       </FormControl>
                     )}
                   </Field>
-                  <Field id="email" name="email">
-                    {({ field, form }) => (
-                      <FormControl isRequired>
-                        <FormLabel>Email</FormLabel>
-                        <Input
-                          {...field}
-                          placeholder="xyz@mail.com"
-                          bg={"gray.100"}
-                          border={0}
-                          color={"gray.500"}
-                          _placeholder={{
-                            color: "gray.500",
-                          }}
-                        />
-                        <ErrorMessage name="email">
-                          {(error) => (
-                            <Text as="span" color="red">
-                              {error}
-                            </Text>
-                          )}
-                        </ErrorMessage>
-                      </FormControl>
-                    )}
-                  </Field>
+
                   <Field id="password" name="password">
                     {({ field, form }) => (
                       <FormControl isRequired>
@@ -324,9 +199,30 @@ export default function JoinOurTeam() {
                     )}
                   </Field>
 
+                  <Field name="role" id="role">
+                    {({ field, form }) => (
+                      <FormControl isRequired>
+                        <FormLabel>Role</FormLabel>
+                        <Select
+                          {...field}
+                          value={values.role}
+                          onChange={handleChange}
+                        >
+                          <option value="">Select Role</option>
+                          {options.map((option) => (
+                            <option key={option.value} value={option.value}>
+                              {option.label}
+                            </option>
+                          ))}
+                        </Select>
+                      </FormControl>
+                    )}
+                  </Field>
+                  {/* {errors.fruit && touched.fruit && <div>{errors.fruit}</div>} */}
+
                   {/* <Button fontFamily={"heading"} bg={"gray.200"} color={"gray.800"}>
-                Upload CV
-              </Button> */}
+                  Upload CV
+                </Button> */}
                 </Stack>
                 <Button
                   fontFamily={"heading"}
@@ -341,19 +237,29 @@ export default function JoinOurTeam() {
                   type="submit"
                   isDisabled={disabled}
                 >
-                  Submit
+                  Create
                 </Button>
               </Form>
             )}
           </Formik>
         </Stack>
       </Container>
-      <Blur
+      {/* <Blur
         position={"absolute"}
         top={-10}
         left={-10}
         style={{ filter: "blur(70px)" }}
-      />
+        
+      /> */}
+      <Button onClick={() => setIsApproved(true)} colorScheme="green">
+        Approve
+      </Button>
+      <Button onClick={() => setIsApproved(false)} colorScheme="red" ml="2">
+        deny
+      </Button>
+      {isApproved !== null && (
+        <Text> {isApproved ? "Approved" : "denied"}</Text>
+      )}
     </Box>
   );
 }

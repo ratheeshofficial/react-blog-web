@@ -28,8 +28,8 @@ const Home = () => {
       <Box>
         {cat &&
           cat.map((cat, i) => (
-            <Link to={`/?cat=${cat.name}`}>
-              <Text key={i}>{cat.name}</Text>
+            <Link key={i} to={`/?cat=${cat.name}`}>
+              <Text>{cat.name}</Text>
             </Link>
           ))}
       </Box>
